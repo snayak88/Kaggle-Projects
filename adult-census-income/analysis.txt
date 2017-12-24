@@ -1,0 +1,160 @@
+> model <- randomForest(income ~ ., data = data)
+> model
+
+Call:
+ randomForest(formula = income ~ ., data = data) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 3
+
+        OOB estimate of  error rate: 17.6%
+Confusion matrix:
+      <=50K >50K class.error
+<=50K 24641   79 0.003195793
+>50K   5651 2190 0.720698890 
+
+=========================================================================================================
+ggplot(data = data, aes(x=income, y = age)) + geom_boxplot()
+#People above ~ 45 earn close above 50k
+=========================================================================================================
+ggplot(data = data, aes(x=income, y = hours.per.week)) + geom_boxplot()
+#People who work more than 40hrs a week earn > 50k
+=========================================================================================================
+ggplot(data = data, aes(x=income, y = fnlwgt)) + geom_boxplot()
+#Does not have any effect. Remove
+=========================================================================================================
+table(data$education, data$income)
+#Education has a significant impact on income. People who have gone to college are more likely to earn more than 50,000.
+=========================================================================================================
+ggplot(data = data, aes(x=income, y = education.num)) + geom_boxplot()
+#Education.num > 10 has a very high chance of earning > 50000
+===========================================================================================================
+table(data$marital.status, data$income)
+#Not being married significantly increases chance of income <=50k
+============================================================================================================
+table(data$occupation, data$income)
+#Classification may not be that clearcut
+=============================================================================================================
+table(data$relationship, data$income)
+#Correlated with marital status
+=============================================================================================================
+prop.table(table(data$sex, data$income))
+#Men are likelier to earn more than 50k per annum
+=============================================================================================================
+ggplot(data = data, aes(x = income, y = capital.gain)) + geom_boxplot()
+#Some outliers may skewer the data. Remove.
+=============================================================================================================
+ggplot(data = data, aes(x = income, y = capital.loss)) + geom_boxplot()
+#Capital loss > 1500 means  income > 50000 except for 1 outlier.
+==============================================================================================================
+table(data$native.country, data$income)
+#May not be that useful. Remove.
+
+================================================================================================================
+
+> samples <- sample(32561,25000)
+> train_data <- data[samples,]
+> test_data <- data[-samples,]
+> model <- randomForest(income ~ age+hours.per.week+education+education.num+marital.status+sex+capital.loss, data = data)
+> model <- randomForest(income ~ age+hours.per.week+education+education.num+marital.status+sex+capital.loss, data = train_data)
+> model
+
+Call:
+ randomForest(formula = income ~ age + hours.per.week + education +      education.num + marital.status + sex + capital.loss, data = train_data) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 2
+
+        OOB estimate of  error rate: 16.42%
+Confusion matrix:
+      <=50K >50K class.error
+<=50K 17470 1479  0.07805161
+>50K   2626 3425  0.43397785
+
+Significant improvement in predictions.
+
+===================================================================================================================
+With mtry = 4
+
+> model <- randomForest(income ~ age+hours.per.week+education+education.num+marital.status+sex+capital.loss, data = train_data, mtry=4)
+> model
+
+Call:
+ randomForest(formula = income ~ age + hours.per.week + education +      education.num + marital.status + sex + capital.loss, data = train_data,      mtry = 4) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 4
+
+        OOB estimate of  error rate: 17.13%
+Confusion matrix:
+      <=50K >50K class.error
+<=50K 17184 1765  0.09314476
+>50K   2518 3533  0.41612957
+
+=========================================================================================================================
+
+model <- randomForest(income ~ age+hours.per.week+education.num+marital.status+sex+capital.loss+workclass, data = train_data)
+> model
+
+Call:
+ randomForest(formula = income ~ age + hours.per.week + education.num +      marital.status + sex + capital.loss + workclass, data = train_data) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 2
+
+        OOB estimate of  error rate: 15.93%
+Confusion matrix:
+      <=50K >50K class.error
+<=50K 17476 1449  0.07656539
+>50K   2533 3542  0.41695473
+
+==========================================================================================================================
+
+> model <- randomForest(income ~ age+hours.per.week+education.num+marital.status+sex+capital.loss+workclass+occupation, data = train_data)
+> model
+
+Call:
+ randomForest(formula = income ~ age + hours.per.week + education.num +      marital.status + sex + capital.loss + workclass + occupation,      data = train_data) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 2
+
+        OOB estimate of  error rate: 15.42%
+Confusion matrix:
+      <=50K >50K class.error
+<=50K 17476 1449  0.07656539
+>50K   2407 3668  0.39621399
+
+============================================================================================================================
+
+> model <- randomForest(income ~ age+hours.per.week+education.num+marital.status+sex+capital.loss+workclass+occupation+sex, data = train_data)
+> model
+
+Call:
+ randomForest(formula = income ~ age + hours.per.week + education.num +      marital.status + sex + capital.loss + workclass + occupation +      sex, data = train_data) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 2
+
+        OOB estimate of  error rate: 15.36%
+Confusion matrix:
+      <=50K >50K class.error
+<=50K 17487 1438  0.07598415
+>50K   2401 3674  0.39522634
+
+===========================================================================================================================
+
+ model <- randomForest(income ~ age+hours.per.week+education.num+marital.status+sex+capital.loss+workclass+occupation+sex+capital.gain, data = train_data)
+> model
+
+Call:
+ randomForest(formula = income ~ age + hours.per.week + education.num +      marital.status + sex + capital.loss + workclass + occupation +      sex + capital.gain, data = train_data) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 3
+
+        OOB estimate of  error rate: 13.92%
+Confusion matrix:
+      <=50K >50K class.error
+<=50K 17623 1302  0.06879789
+>50K   2177 3898  0.35835391
